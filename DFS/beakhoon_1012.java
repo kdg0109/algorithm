@@ -1,88 +1,99 @@
 package samsung01;
-
 import java.util.Scanner;
+/**
+ * 첫째 줄에 1번 톱니바퀴의 상태, 
+ * 둘째 줄에 2번 톱니바퀴의 상태, 
+ * 셋째 줄에 3번 톱니바퀴의 상태, 
+ * 넷째 줄에 4번 톱니바퀴의 상태가 주어진다. 
+ * 
+ * 상태는 8개의 정수로 이루어져 있고, 
+ * 12시방향부터 시계방향 순서대로 주어진다. 
+ * N극은 0, S극은 1로 나타나있다.
+ * 
+ * 다섯째 줄에는 회전 횟수 K(1 ≤ K ≤ 100)가 주어진다. 
+ * 다음 K개 줄에는 회전시킨 방법이 순서대로 주어진다. 
+ * 각 방법은 두 개의 정수로 이루어져 있고, 
+ * 첫 번째 정수는 회전시킨 톱니바퀴의 번호, 
+ * 두 번째 정수는 방향이다. 
+ * 
+ * 방향이 1인 경우는 시계 방향이고, 
+ * -1인 경우는 반시계 방향이다.
+ * 
+ */
 
-public class samsung02 {
-	static int t = 0; 			//테스트 케이스
-	static int m = 0; 			//배추밭 가로 길이
-	static int n = 0;			//배추밭 세로 길이
-	static int k = 0;			//배추를 심은 개수
-	static int x, y = 0;		//배추 좌표 XY
-	static int map[][] = null;	//배추 밭
-	static boolean visited[][] = null;	//방문 여부 
-	static int cnt = 0;			//벌레 수
-	static Scanner sc = null;
+public class samsung01 {
+	static int k = 0; 									//회전 횟수
+	final static int RIGHT_TURN = 1;			//시계 방향
+	final static int LEFT_TURN = -1;			//반시계 방향
+	static int start_pos_init = 0;
+	static int pos = 0;							//초기값
+	static int direction = 0;					//방향
 	
-	//int[가로][세로]
+	static int wheel [][] = new int[8][4];		//각 행은 톱니바퀴임 [열][행] 임!!!!
+	static int mRow = 0;							//좌, 우 이동 때 쓰이는 열좌표
+	
+	static boolean visited[] = new boolean[4];
+	
 	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
 		
-		
-		sc = new Scanner(System.in);
 		//초기화
-		t = sc.nextInt();
-		for(int i = 0; i < t; i++){
-			//초기화
-			//맵 세팅 및 배추 심기
-			mapSetting();
-	
-			//벌레 움직이기 시작 (벌레를 놓는 위치)
-			for(int yy = 0; yy < map[0].length; yy++){
-				for(int xx = 0; xx < map.length; xx++){
-					//쭉 탐색하면서 배추가 있는 곳에만 벌레 뿌리기
-					if(map[xx][yy] == 1){
-						//만약에 배추를 처음 방문한 곳이였다면 true
-						if(dfs(xx, yy)){
-							cnt++;
-						}
-					}
-				}
+		for(int i = 0; i < 4; i++){
+			String array = sc.next();
+			for(int j = 0; j < array.length(); j++){
+				wheel[j][i] = Integer.parseInt(array.substring(j,j+1));	//열행임
 			}
-			System.out.println(cnt);
 		}
-		sc.close();
-	}
-
-	private static boolean dfs(int mX, int mY) {
-		if(visited[mX][mY])	//이미 방문했다면 되돌아 나가기
-			return false;
-		
-		visited[mX][mY] = true;
-		//제한 구역 설정
-		//mX-1 >= 0  이면, 탐색 허용	(왼)
-		//mX+1 < m 	이면, 탐색 허용	(오른)
-		//mY-1 >= 0  이면, 탐색 허용	(위)
-		//mY+1 < n 	이면, 탐색 허용	(아래)
-		if(mX-1 >= 0){	 
-			if(map[mX-1][mY] == 1){	dfs(mX-1, mY);	}
-		}
-		if(mX+1 <  m){	 
-			if(map[mX+1][mY] == 1){	dfs(mX+1, mY);	}
-		}
-		if(mY-1 >= 0){	 
-			if(map[mX][mY-1] == 1){	dfs(mX, mY-1);	}
-		}
-		if(mY+1 <  n){	 
-			if(map[mX][mY+1] == 1){	dfs(mX, mY+1);	}
-		}
-		return true;
-	}
-
-	private static void mapSetting() {
-		m = sc.nextInt();
-		n = sc.nextInt();
 		k = sc.nextInt();
-		x = 0;
-		y = 0;
-		cnt = 0;
 		
-		//맵 세팅
-		map = new int[m][n];			//열, 행
-		visited = new boolean[m][n];	//열, 행
-		//배추 심기
-		for(int i = 0; i < k; i++){
-			int choX = sc.nextInt();	//Y가 즉, 행
-			int choY = sc.nextInt();	//X가 즉, 열
-			map[choX][choY] = 1;
+		for(int a = 0; a < k; a++){
+			pos = sc.nextInt() - 1;
+			direction = sc.nextInt();		//왼쪽이냐 오른쪽이냐
+			
+			start_pos_init = pos;
+			dfs(pos, direction);
+			visited = new boolean[4];		//초기화
+		}
+		int result = 0;
+		if(wheel[0][0] == 1){	result += 1;	}
+		if(wheel[0][1] == 1){	result += 2;	}
+		if(wheel[0][2] == 1){	result += 4;	}
+		if(wheel[0][3] == 1){	result += 8;	}
+		System.out.println(result);
+	}
+	
+
+	static void dfs(int pos, int direction){
+		if(visited[pos])
+			return;
+
+		visited[pos] = true;
+		
+		//들어간다는 것 자체가 바꿀게 있다는 것임
+		if(pos < 3 && visited[pos+1] != true && wheel[2][pos] != wheel[6][pos+1]){
+			dfs(pos+1, direction*(-1));
+		}
+		if(pos > 0 && visited[pos-1] != true && wheel[6][pos] != wheel[2][pos-1]){
+			dfs(pos-1, direction*(-1));
+		}
+
+		if(direction == RIGHT_TURN){
+			int start_tmp = 0;
+			int tmp = 0;
+			start_tmp = wheel[7][pos];
+			for(int i = 7; i > 0; i--){
+				wheel[i][pos] = wheel[i-1][pos];
+			}
+			wheel[0][pos] = start_tmp;
+
+		}else{
+			int end_tmp = 0;
+			int tmp = 0;
+			end_tmp = wheel[0][pos];
+			for(int i = 0; i < 7; i++){
+				wheel[i][pos] = wheel[i+1][pos];
+			}
+			wheel[7][pos] = end_tmp;
 		}
 	}
 }
