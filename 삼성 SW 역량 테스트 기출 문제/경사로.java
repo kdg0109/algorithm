@@ -139,7 +139,7 @@ public class samsung04 {
 			return;
 		}
 		//2. 현재 위치와 다음 위치의 차이를 구해
-		//2-1. ★서로의 차이가 2이상이면 실패 현재 row 종료
+		//2-1. ★서로의 차이가 2이상이면 실패 현재 col 종료
 		if(map[row][col] - map[row+1][col] > 1){
 			//System.out.println("실패1");
 			return;
@@ -154,7 +154,7 @@ public class samsung04 {
 				for(int i = 0; i < L; i++){
 					loadCheck += map[row+1+i][col]; 
 				}
-				// 이 말은 경사로 놓을 자리가 평평치 않다는 것 return하고 현재 row 종료
+				// 이 말은 경사로 놓을 자리가 평평치 않다는 것 return하고 현재 col 종료
 				if(map[row+1][col] != (loadCheck/L)) {
 					//System.out.println("실패2");
 					return;
@@ -187,7 +187,7 @@ public class samsung04 {
 				for(int i = 0; i < L; i++){
 					loadCheck += map[row-i][col]; 
 				}
-				// 이 말은 경사로 놓을 자리가 평평치 않다는 것 return하고 현재 row 종료
+				// 이 말은 경사로 놓을 자리가 평평치 않다는 것 return하고 현재 col 종료
 				if(map[row][col] != (loadCheck/L)) {
 					//System.out.println("실패1-2");
 					return;
